@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    	 http://www.springframework.org/schema/beans/spring-beans.xsd
+     	 http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/tx
+     	 http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- dao，需要注入sessionFactory对象！ -->
+	
+	<!-- 方式一：每一个Dao都注入sessionFactory对象	
+	<bean id="deptDao" class="cn.aichange.dao.impl.DeptDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean id="employeeDao" class="cn.aichange.dao.impl.EmployeeDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean id="customerDao" class="cn.aichange.dao.impl.CustomerDao">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	 -->
+	 
+
+	<!-- 方式二：定义一个父bean，存放所有bean都有的属性！ 使用的时候，直接用parent引用即可！ -->
+	<bean id="baseBean" abstract="true">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>	
+	<bean id="deptDao" class="cn.aichange.dao.impl.DeptDao" parent="baseBean"></bean>	
+	<bean id="employeeDao" class="cn.aichange.dao.impl.EmployeeDao" parent="baseBean"></bean>
+	<bean id="customerDao" class="cn.aichange.dao.impl.CustomerDao" parent="baseBean"></bean>
+	<bean id="traceHistoryDao" class="cn.aichange.dao.impl.TraceHistoryDao" parent="baseBean"></bean>
+	<bean id="transferHistoryDao" class="cn.aichange.dao.impl.TransferHistoryDao" parent="baseBean"></bean>
+	
+</beans>     
+
+
+
+
+
+
+
+
+
+

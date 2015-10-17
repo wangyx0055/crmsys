@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!-- 通用的常量 -->
+	<!-- 1. 修改标签默认样式 -->
+	<!-- 2. 设置开发模式运行 -->
+	<!-- 3. 关闭动态方法调用 -->
+	<!-- 4. 设置struts2访问后缀为.action-->
+	
+	<constant name="struts.ui.theme" value="simple"></constant>
+	<constant name="struts.devMode" value="true"></constant>
+	<constant name="struts.enable.DynamicMethodInvocation" value="false"></constant>
+	<constant name="struts.action.extension" value="action"></constant>
+	
+	
+	<package name="crmsys" extends="struts-default">
+		<!-- 配置登录拦截器 -->
+		<interceptors>
+			<interceptor name="loginInterceptor" class="cn.aichange.interceptor.LoginInterceptor"></interceptor>
+			<interceptor-stack name="loginStack">
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="loginInterceptor"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="loginStack"></default-interceptor-ref>
+		
+		<!-- 配置全局视图 -->
+		<global-results>
+			<result name="error">/WEB-INF/jsps/error.jsp</result>
+			<result name="login">/login.jsp</result>
+		</global-results>
+		
+		
+		<action name="main_*" class="mainAction" method="{1}">
+			<result name="success">/WEB-INF/jsps/main.jsp</result>
+			<result name="top">/WEB-INF/jsps/top.jsp</result>
+			<result name="menu">/WEB-INF/jsps/menu.jsp</result>
+			<result name="index">/WEB-INF/jsps/index.jsp</result>
+		</action>
+		
+		<action name="image_*" class="imageAction" method="{1}">
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<action name="login_*" class="loginAction" method="{1}">
+		<interceptor-ref name="defaultStack"></interceptor-ref>
+			<result name="success" type="redirectAction">main_execute.action</result>
+		</action>
+		
+		<action name="dept_*" class="deptAction" method="{1}">
+			<result name="list">/WEB-INF/jsps/dept/list.jsp</result>
+			<result name="toEdit">/WEB-INF/jsps/dept/edit.jsp</result>
+			<result name="toList" type="redirectAction">dept_list.action</result>
+		</action>
+		
+		<action name="emp_*" class="employeeAction" method="{1}">
+			<result name="list">/WEB-INF/jsps/emp/list.jsp</result>
+			<result name="toEdit">/WEB-INF/jsps/emp/edit.jsp</result>
+			<result name="toList" type="redirectAction">emp_list.action</result>
+		</action>
+		
+		<action name="customer_*" class="customerAction" method="{1}">
+			<result name="list">/WEB-INF/jsps/customer/list.jsp</result>
+			<result name="toEdit">/WEB-INF/jsps/customer/edit.jsp</result>
+			<result name="toListTrace" type="redirectAction">customer_list.action?condition.traceStatus=0</result>
+			<result name="toListPool" type="redirectAction">customer_list.action?condition.traceStatus=-1</result>
+		</action>
+		
+		<action name="trace_*" class="traceHistoryAction" method="{1}">
+			<result name="list">/WEB-INF/jsps/trace/list.jsp</result>
+			<result name="toEdit">/WEB-INF/jsps/trace/edit.jsp</result>
+			<result name="toList" type="redirectAction">trace_list.action</result>
+		</action>
+		
+		<action name="transfer_*" class="transferHistoryAction" method="{1}">
+			<result name="list">/WEB-INF/jsps/transfer/list.jsp</result>
+			<result name="toEdit">/WEB-INF/jsps/transfer/edit.jsp</result>
+			<result name="toList" type="redirectAction">transfer_list.action</result>
+		</action>
+	</package>
+
+</struts>

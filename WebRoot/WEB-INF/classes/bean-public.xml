@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    	 http://www.springframework.org/schema/beans/spring-beans.xsd
+     	 http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/tx
+     	 http://www.springframework.org/schema/tx/spring-tx.xsd">
+     	 
+     	 
+	<!-- 一、spring常用配置 -->
+	<!-- 1.开启注解扫描 -->
+	<context:component-scan base-package="cn.aichange.."></context:component-scan>
+	
+	
+	<!-- 二、配置数据源 -->
+	<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass"
+			value="com.mysql.jdbc.Driver">
+		</property>
+		<property name="jdbcUrl"
+			value="jdbc:mysql://localhost:3306/crm_sys">
+		</property>
+		<property name="user" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+	
+	
+	<!-- 三、配置Spring与hibernate整合 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<!-- 关闭关闭注解验证javaEE6.0以上需要此配置 -->
+				<prop key="javax.persistence.validation.mode">none</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>cn/aichange/bean/Customer.hbm.xml</value>
+				<value>cn/aichange/bean/Dept.hbm.xml</value>
+				<value>cn/aichange/bean/Employee.hbm.xml</value>
+				<value>cn/aichange/bean/TraceHistory.hbm.xml</value>
+				<value>cn/aichange/bean/TransferHistory.hbm.xml</value></list>
+		</property>
+	</bean>
+	
+	
+	<!-- 四、声明式事务管理 -->
+	<!-- 1.配置事务管理类（事务切面），必须用连接池 -->
+	<bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<!-- 2.事务通知配置，拦截到方法后，如何管理事务 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" propagation="SUPPORTS"/>
+			<tx:method name="find*" read-only="true" propagation="SUPPORTS"/>
+			<tx:method name="save*" read-only="false" propagation="REQUIRED"/>
+			<tx:method name="update*" read-only="false" propagation="REQUIRED"/>
+			<tx:method name="delete*" read-only="false" propagation="REQUIRED"/>
+			<tx:method name="*" read-only="false" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 3.AOP配置（切入点表达式+应用事务通知） -->
+	<aop:config>
+		<!-- 切入点表达式主要是用于生成代理对象
+			   拦截方法->生成代理->开启事务（判断：如果已经在OpenSessionInView中开启事务，则不再开启
+		 -->
+		<aop:pointcut expression="execution(* cn..*Service.*(..))" id="pt"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="pt"/>
+	</aop:config>
+</beans>
