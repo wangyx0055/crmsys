@@ -54,7 +54,9 @@
 				<value>cn/aichange/bean/Dept.hbm.xml</value>
 				<value>cn/aichange/bean/Employee.hbm.xml</value>
 				<value>cn/aichange/bean/TraceHistory.hbm.xml</value>
-				<value>cn/aichange/bean/TransferHistory.hbm.xml</value></list>
+				<value>cn/aichange/bean/TransferHistory.hbm.xml</value>
+				<value>cn/aichange/bean/UbtUser.hbm.xml</value>
+				<value>./User.hbm.xml</value></list>
 		</property>
 	</bean>
 	
